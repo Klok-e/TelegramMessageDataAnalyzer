@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1e5ce9a1-2a3b-42eb-9e09-2face13d24ab" name="Default Changelist" comment="init">
-      <change beforePath="$PROJECT_DIR$/.idea/TelegramMessageDataAnalyzer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/TelegramMessageDataAnalyzer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scraped_information.json" beforeDir="false" afterPath="$PROJECT_DIR$/scraped_information.json" afterDir="false" />
-    </list>
+    <list default="true" id="1e5ce9a1-2a3b-42eb-9e09-2face13d24ab" name="Default Changelist" comment="init" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,7 +104,7 @@
       <updated>1540999454467</updated>
       <workItem from="1671316024788" duration="184000" />
       <workItem from="1671361053831" duration="211000" />
-      <workItem from="1672005756325" duration="4243000" />
+      <workItem from="1672005756325" duration="4922000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1541777107011</created>
