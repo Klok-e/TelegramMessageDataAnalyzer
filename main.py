@@ -84,6 +84,20 @@ def get_message_for_each_hour_for_every_day_of_the_week(data):
     return hour_messages
 
 
+def get_message_count_for_each_day_of_the_week(data):
+    day_messages = [list() for _ in range(7)]
+    for msg in data:
+        day_messages[msg.datetime.weekday()].append(msg)
+    return [len(x) for x in day_messages]
+
+
+def get_message_count_for_each_year(data):
+    year_messages = {}
+    for msg in data:
+        year_messages.setdefault(msg.datetime.year, []).append(msg)
+    return {year: len(msgs) for year, msgs in year_messages.items()}
+
+
 def plot_messages_per_hour(data, label: str):
     message_per_minute_hour = get_message_for_each_hour(data)
     np_data = np.concatenate((np.arange(0, 24).reshape(1, 24), np.asarray(message_per_minute_hour).reshape(1, 24)), 0)
@@ -126,26 +140,64 @@ def get_all_users(data):
     return all_users
 
 
-def plot_and_save_24h_msgs_for_every_user(data):
+def plot_and_save_24h_msgs_for_most_talkative(data):
     all_users = get_all_users(data)
     user_ids = list(all_users.keys())
     user_ids.sort()
 
     id_to_msgs = {u_id: get_msgs_for_user(u_id, data) for u_id in user_ids}
-    mx_msgs = max(get_message_for_each_hour(max(id_to_msgs.values(), key=lambda x: len(x))))
+    # mx_msgs = max(get_message_for_each_hour(max(id_to_msgs.values(), key=lambda x: len(x))))
+    sorted_user_msgs = list(reversed(sorted(id_to_msgs.items(), key=lambda x: len(x[1]))))
 
-    for i in range(len(user_ids)):
-        user_id = user_ids[i]
-        msgs = id_to_msgs[user_id]
+    for id, msgs in sorted_user_msgs[:10]:
+        plot_messages_per_hour(msgs, '{} {}'.format(id, str(all_users[id])))
 
-        plot_messages_per_hour(msgs, '{} {}'.format(user_id, str(all_users[user_id])))
+        plt.legend(loc="right", bbox_to_anchor=(2.1, 0.5))
+    plt.savefig('most_talkative_users_day.pdf', bbox_inches='tight')
+    plt.clf()
 
-        plt.yticks([i for i in range(0, mx_msgs + (mx_msgs // 10), mx_msgs // 10)])
 
-        if i % 8 == 7 or i == len(user_ids) - 1:
-            art = plt.legend(loc="right", bbox_to_anchor=(2.1, 0.5))
-            plt.savefig('all{}.pdf'.format(i), bbox_inches='tight', additional_artists=[art, ])
-            plt.clf()
+def plot_and_save_7day_msgs_for_most_talkative(data):
+    all_users = get_all_users(data)
+    user_ids = list(all_users.keys())
+    user_ids.sort()
+
+    id_to_msgs = {u_id: get_msgs_for_user(u_id, data) for u_id in user_ids}
+    # mx_msgs = max(get_message_for_each_hour(max(id_to_msgs.values(), key=lambda x: len(x))))
+    sorted_user_msgs = list(reversed(sorted(id_to_msgs.items(), key=lambda x: len(x[1]))))
+
+    for id, msgs in sorted_user_msgs[:10]:
+        message_per_day = get_message_count_for_each_day_of_the_week(msgs)
+
+        plt.plot(message_per_day, label='{} {}'.format(id, str(all_users[id])))
+        plt.grid(True)
+
+        plt.legend(loc="right", bbox_to_anchor=(2.1, 0.5))
+    plt.savefig('most_talkative_users_week.pdf', bbox_inches='tight')
+    plt.clf()
+
+
+def plot_and_save_year_msgs_for_most_talkative(data):
+    all_users = get_all_users(data)
+    user_ids = list(all_users.keys())
+    user_ids.sort()
+
+    id_to_msgs = {u_id: get_msgs_for_user(u_id, data) for u_id in user_ids}
+    # mx_msgs = max(get_message_for_each_hour(max(id_to_msgs.values(), key=lambda x: len(x))))
+    sorted_user_msgs = list(reversed(sorted(id_to_msgs.items(), key=lambda x: len(x[1]))))
+
+    for id, msgs in sorted_user_msgs[:10]:
+        message_per_year = get_message_count_for_each_year(msgs)
+        message_per_year_sorted = list(sorted(message_per_year.items(), key=lambda x: x[0]))
+
+        ticks = list(map(lambda x: x[0], message_per_year_sorted))
+        plt.xticks(range(len(ticks)), ticks)
+        plt.plot(list(map(lambda x: x[1], message_per_year_sorted)), label='{} {}'.format(id, str(all_users[id])))
+        plt.grid(True)
+
+        plt.legend(loc="right", bbox_to_anchor=(2.1, 0.5))
+    plt.savefig('most_talkative_users_year.pdf', bbox_inches='tight')
+    plt.clf()
 
 
 def plot_and_save_clusters_of_message_text(data):
@@ -196,9 +248,11 @@ def plot_and_save_clusters_of_message_text(data):
 def main():
     data = process_data(load_data())
 
-    plot_messages_per_hour_for_week(data)
+    plot_and_save_24h_msgs_for_most_talkative(data)
+    plot_and_save_7day_msgs_for_most_talkative(data)
+    plot_and_save_year_msgs_for_most_talkative(data)
 
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
